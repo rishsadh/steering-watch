@@ -1,0 +1,40 @@
+{
+  "name": "steering-watch",
+  "version": "0.1.0",
+  "description": "A recurring index of AI-directed instructions in llms.txt files, with its scanner and harmless canary pages.",
+  "type": "module",
+  "bin": {
+    "steering-watch": "bin/steering-watch.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "sites",
+    "canary",
+    "data",
+    "INDEX.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "scan": "node bin/steering-watch.js scan",
+    "index": "node bin/steering-watch.js run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rishsadh/steering-watch.git"
+  },
+  "keywords": [
+    "llms.txt",
+    "prompt-injection",
+    "steering",
+    "ai-agents",
+    "aeo",
+    "canary",
+    "scanner"
+  ],
+  "author": "Rish Sadh (https://github.com/rishsadh)",
+  "license": "MIT"
+}
