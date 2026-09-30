@@ -1,0 +1,1 @@
+{ "theme": "rishsadh", "pre": "Who tells ", "accent": "AI", "post": " what to say?", "sub": "npx github:rishsadh/steering-watch scan example.com", "prompt": true, "repo": "rishsadh/steering-watch", "size": 76 }

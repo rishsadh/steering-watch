@@ -1,0 +1,8 @@
+steering-watch run 2026-09-30  (84s)
+140 sites listed, 124 served a file, 16 did not
+  promotional   14 files
+  steering      30 files
+  terms         16 files
+  none          64 files
+wrote data/snapshots/2026-09-30.json
+wrote INDEX.md: 14 promotional-or-stronger sites, 30 steering-only sites

@@ -51,7 +51,7 @@ const LEAD = '^[\\s\\-*>\\d.)]*';
 
 // Line rules. `needs` says what context the rule needs before it may fire:
 //   'addr'  the line names an AI reader or sits under a heading that addresses one
-//   'heading' only a heading that addresses an AI reader counts (for weak, low-precision rules)
+//   'heading' only the nearest heading counts, and it must address an AI reader (for weak rules)
 //   'any'   the line is enough on its own
 // `literalWhenCode` downgrades a hit to tier "literal" when it sits in a code fence or inline code.
 export const LINE_RULES = [
@@ -321,8 +321,8 @@ export function describeRules() {
 
 // A heading like "For AI Agents" makes the lines under it "addressed". A rule with needs: 'addr'
 // only fires when it has that context, or when the line itself names an AI reader.
-export function contextAllows(rule, { headingAI, lineAI }) {
+export function contextAllows(rule, { headingAI, nearestAI, lineAI }) {
   if (rule.needs === 'any') return true;
-  if (rule.needs === 'heading') return headingAI;
+  if (rule.needs === 'heading') return nearestAI;
   return headingAI || lineAI;
 }

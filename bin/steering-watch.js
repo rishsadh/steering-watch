@@ -122,7 +122,7 @@ async function cmdRun({ opt }) {
   for (const t of ['injection', 'command', 'hidden', 'promotional', 'steering', 'terms', 'literal', 'none']) {
     if (s.by_worst_tier[t]) console.log(`  ${t.padEnd(12)} ${String(s.by_worst_tier[t]).padStart(3)} files`);
   }
-  console.log(`wrote ${path.join(dataDir, 'snapshots', snap.date + '.json')}`);
+  console.log(`wrote ${path.relative(process.cwd(), path.join(dataDir, 'snapshots', snap.date + '.json')).split(path.sep).join('/')}`);
   if (!opt['no-report']) {
     const r = buildReport({ dataDir, outFile: path.resolve(opt.out || 'INDEX.md'), csvFile: path.join(dataDir, 'latest.csv'), historyFile: path.join(dataDir, 'history.csv') });
     console.log(`wrote INDEX.md: ${r.strong} promotional-or-stronger sites, ${r.mild} steering-only sites`);

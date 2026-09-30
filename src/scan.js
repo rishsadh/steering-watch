@@ -93,6 +93,7 @@ export function scanText(text) {
     if (linkEntry) prose = prose.replace(/\[[^\]]*\]/g, ' ');
     const headingText = headings.length ? headings[headings.length - 1].text : '';
     const headingAI = headings.some((h) => headingAddressesAI(h.text));
+    const nearestAI = headings.length > 0 && headingAddressesAI(headings[headings.length - 1].text);
     const lineAI = !linkEntry && AI_WORD.test(prose);
     for (const r of LINE_RULES) {
       if (u.fence) {
@@ -103,7 +104,7 @@ export function scanText(text) {
       }
       const hitProse = r.re.test(prose);
       if (hitProse) {
-        if (!contextAllows(r, { headingAI, lineAI })) continue;
+        if (!contextAllows(r, { headingAI, nearestAI, lineAI })) continue;
         const demote = r.demoteIf && r.demoteIf.test(prose);
         findings.push(make(r, demote ? 'terms' : r.tier, u, headingText, demote ? 'a usage term addressed to AI readers' : r.why));
       } else if (r.literalWhenCode && r.re.test(plain)) {

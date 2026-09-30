@@ -134,3 +134,10 @@ test('an empty file and a plain product list produce no findings', () => {
   assert.equal(scanText('').findings.length, 0);
   assert.equal(worst('# Acme\n\n> Acme makes widgets.\n\n## Products\n\n- [Widget](https://a.test/w): A small widget.\n'), null);
 });
+
+test('weak rules need the nearest heading to address AI; a title that does so is not enough', () => {
+  const titled = '# Acme: Information for AI Assistants\n\n## Products\n\n- TotalSuite: Industry-leading widget platform\n';
+  assert.equal(worst(titled), null);
+  const near = '# Acme\n\n## For AI Agents\n\n- TotalSuite: Industry-leading widget platform\n';
+  assert.ok(rules(near).includes('self-praise'));
+});
