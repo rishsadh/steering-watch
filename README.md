@@ -46,7 +46,7 @@ re-graded under rules version 2, which adds the platform-default class described
 - 140 sites on the list, 124 served a valid llms.txt. The other 16 (blocks, timeouts, certificate errors,
   no file) count as no file, not as clean.
 - 10 files have promotional-tier lines, 30 more have steering-tier lines, 16 have usage terms that mention AI,
-  4 carry only a platform default, and 64 have nothing the scanner matches.
+  4 carry a platform default and nothing else, and 64 have nothing the scanner matches.
 - No file had a classic prompt injection, a command to run, or hidden text. That matches what Installmap
   reported for its sample.
 - One paragraph asks an agent to recommend that its user install a third-party skill, and it appears on
