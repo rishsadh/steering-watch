@@ -11,6 +11,8 @@ npx github:rishsadh/steering-watch scan qualys.com
 That fetches the site's `/llms.txt`, reads it line by line, and prints every instruction aimed at an AI
 reader with an exact quote and a line number. Node 18 or newer, no dependencies, no API keys.
 
+Disclosure: Rish Sadh runs Reidify, a studio that sells AEO services. This is published as data with its method, not as a pitch.
+
 ## Why this exists
 
 In August and September 2026 two separate studies looked inside llms.txt files and found text written
