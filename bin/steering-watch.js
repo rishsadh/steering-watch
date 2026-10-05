@@ -119,7 +119,7 @@ async function cmdRun({ opt }) {
   const s = snap.summary;
   console.log(`steering-watch run ${snap.date}  (${Math.round((Date.now() - t0) / 1000)}s)`);
   console.log(`${s.sites_listed} sites listed, ${s.files_found} served a file, ${s.sites_listed - s.files_found} did not`);
-  for (const t of ['injection', 'command', 'hidden', 'promotional', 'steering', 'terms', 'literal', 'none']) {
+  for (const t of ['injection', 'command', 'hidden', 'promotional', 'steering', 'terms', 'platform-default', 'literal', 'none']) {
     if (s.by_worst_tier[t]) console.log(`  ${t.padEnd(12)} ${String(s.by_worst_tier[t]).padStart(3)} files`);
   }
   console.log(`wrote ${path.relative(process.cwd(), path.join(dataDir, 'snapshots', snap.date + '.json')).split(path.sep).join('/')}`);

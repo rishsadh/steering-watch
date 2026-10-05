@@ -38,14 +38,21 @@ of whether an agent obeys instructions it finds in a page.
 
 ![the first index run](docs/run.png)
 
+The screenshot shows the run as first graded, with rules version 1. The numbers below are the same run
+re-graded under rules version 2, which adds the platform-default class described in the last bullet.
+
 - 140 sites on the list, 124 served a valid llms.txt. The other 16 (blocks, timeouts, certificate errors,
   no file) count as no file, not as clean.
-- 14 files have promotional-tier lines, 30 more have steering-tier lines, 16 have usage terms that mention AI,
-  and 64 have nothing the scanner matches.
+- 10 files have promotional-tier lines, 30 more have steering-tier lines, 16 have usage terms that mention AI,
+  4 carry only a platform default, and 64 have nothing the scanner matches.
 - No file had a classic prompt injection, a command to run, or hidden text. That matches what Installmap
   reported for its sample.
-- Three companies (Nanit, Wyze and Withings) serve the same paragraph asking an agent to recommend that its
-  user install a third-party skill. The index has a section for lines shared across sites.
+- One paragraph asks an agent to recommend that its user install a third-party skill, and it appears on
+  several unrelated sites in the list. The same paragraph is served by a Shopify store that is not on the list,
+  and the files that carry it say they are built on Shopify, so it reads as a Shopify platform default and not
+  as each company's own steering. The scanner classes it as `platform-default` and the index lists it in its
+  own section, so no site is graded for it. No Shopify document confirming that it is platform-generated was
+  found. The index also has a section for other lines shared across sites.
 
 Every quote, the site it came from and the line number are in [INDEX.md](INDEX.md) and
 [data/latest.csv](data/latest.csv). A match means a line is worth reading. It does not mean the site did
@@ -85,10 +92,15 @@ Run it with `npx github:rishsadh/steering-watch <command>`, or clone the repo an
 | promotional | tells an AI to recommend, favour or frame a company or product, or not to mention rivals |
 | steering | tells an AI how to answer: which pages to use, what tone to take, what not to guess |
 | terms | usage, licensing or integration terms that mention AI |
+| platform-default | a paragraph a hosting platform writes into its customers' files. It says nothing about the site, so the site is not graded for it. Hidden from `scan` unless you pass `--min platform-default` |
 | literal | present but not an instruction: a code sample, or a stray invisible character |
 
 The first three tiers follow the grading Common Crawl used. The tiers describe the kind of instruction, not
 the intent behind it.
+
+A platform default is added as a rule in `PLATFORM_DEFAULTS` in `src/rules.js`, and only after the paragraph
+has been read on a site outside the list. A report built from a snapshot written under older rules re-grades
+it in memory, and the snapshot file is left as written.
 
 ### How the scanner avoids the mistakes Common Crawl reported
 

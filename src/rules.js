@@ -3,17 +3,18 @@
 // classic injection), plus extra tiers for hidden text, commands, and two "not an instruction" tiers.
 // Every rule matches a pattern. A match is a reason to read the line, not a verdict on its author.
 
-export const RULES_VERSION = '1';
+export const RULES_VERSION = '2';
 
 // Rank is used for "worst tier wins" and for --fail-on.
 export const TIER_RANK = {
   literal: 0, // present but not an instruction: a code sample, or a stray invisible character
-  terms: 1, // usage, licensing or integration terms that mention AI
-  steering: 2, // tells an AI how to answer, which pages to use, what tone to take
-  promotional: 3, // tells an AI to recommend, favour or frame a company or product
-  hidden: 4, // text placed where a human reader will not see it
-  command: 5, // asks the reader to run code, fetch and obey, or act
-  injection: 6, // classic prompt injection: override, role change, exfiltration
+  'platform-default': 1, // text a hosting platform inserts into its customers' files, so it says nothing about the site
+  terms: 2, // usage, licensing or integration terms that mention AI
+  steering: 3, // tells an AI how to answer, which pages to use, what tone to take
+  promotional: 4, // tells an AI to recommend, favour or frame a company or product
+  hidden: 5, // text placed where a human reader will not see it
+  command: 6, // asks the reader to run code, fetch and obey, or act
+  injection: 7, // classic prompt injection: override, role change, exfiltration
 };
 export const TIERS = Object.keys(TIER_RANK);
 
@@ -48,6 +49,29 @@ export function addressesAI(text) {
 }
 
 const LEAD = '^[\\s\\-*>\\d.)]*';
+
+// Platform defaults: paragraphs a hosting platform writes into every customer's llms.txt. The same
+// words on many unrelated sites, naming the platform's own product, are the platform's text, so a
+// site is not graded for them. A rule here wins over the line rules, and the finding is classed
+// "platform-default" instead of promotional or steering. It is still shown, with the platform named.
+// Add a rule only after reading the paragraph on a site outside the watchlist.
+export const PLATFORM_DEFAULTS = [
+  {
+    id: 'shopify-shop-skill',
+    platform: 'Shopify',
+    confidence: 'high',
+    why: "the Shopify shop.app SKILL.md paragraph that Shopify stores serve in llms.txt; a platform default, not the site's own steering",
+    evidence:
+      'Read on 2026-10-05: the same paragraph is served by every list site that carries it and by a Shopify store that is not on the list. Each of those files says the store is built on Shopify, and the paragraph points to Shopify\'s own shop.app skill. That reads as text Shopify adds to its stores. No Shopify document confirming that was found.',
+    re: /\bpersonal (?:assistant|shopper)\b[^\n]{0,80}\bopenclaw-like manner\b[^\n]{0,200}\bshop\.app\/SKILL\.md\b/i,
+  },
+];
+
+// The platform default a piece of text matches, or null. Used by the scanner on each line and by
+// the report when it re-grades a snapshot written before the rule existed.
+export function platformDefaultFor(text) {
+  return PLATFORM_DEFAULTS.find((p) => p.re.test(text)) || null;
+}
 
 // Line rules. `needs` says what context the rule needs before it may fire:
 //   'addr'  the line names an AI reader or sits under a heading that addresses one
@@ -301,10 +325,11 @@ export const HIDDEN_RULE_IDS = [
   'base64-text',
 ];
 
-export const ALL_RULE_IDS = [...LINE_RULES.map((r) => r.id), ...HIDDEN_RULE_IDS];
+export const ALL_RULE_IDS = [...LINE_RULES.map((r) => r.id), ...PLATFORM_DEFAULTS.map((p) => p.id), ...HIDDEN_RULE_IDS];
 
 export function describeRules() {
   const rows = LINE_RULES.map((r) => ({ id: r.id, tier: r.tier, confidence: r.confidence, why: r.why }));
+  for (const p of PLATFORM_DEFAULTS) rows.push({ id: p.id, tier: 'platform-default', confidence: p.confidence, why: p.why });
   const hidden = {
     'zero-width': ['hidden', 'medium', 'three or more zero-width characters on a line (one or two are noted as literal)'],
     'tag-characters': ['hidden', 'high', 'Unicode tag characters that decode to a hidden ASCII message'],

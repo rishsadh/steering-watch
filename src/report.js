@@ -1,7 +1,7 @@
 // Turn snapshots into the public index: INDEX.md, data/latest.csv and data/history.csv.
 import fs from 'node:fs';
 import path from 'node:path';
-import { TIER_RANK } from './rules.js';
+import { PLATFORM_DEFAULTS, TIER_RANK } from './rules.js';
 import { diffSnapshots, loadSnapshots } from './snapshot.js';
 import { bestPerLine } from './scan.js';
 import { toCsv } from './csv.js';
@@ -60,6 +60,10 @@ export function buildReport({ dataDir, outFile, csvFile, historyFile }) {
   L.push('# steering-watch index', '');
   L.push(`Run of ${cur.date}, rules version ${cur.rules_version}. ${cur.summary.sites_listed} sites on the fixed list, ${cur.summary.files_found} served a valid llms.txt.`);
   L.push('');
+  if (cur.regraded_from) {
+    L.push(`This snapshot was written under rules version ${cur.regraded_from} and is re-graded under version ${cur.rules_version} when the report is built: ${cur.regraded_findings} finding${cur.regraded_findings === 1 ? '' : 's'} moved to the platform-default tier. The snapshot file itself is unchanged.`);
+    L.push('');
+  }
   L.push('Every line below is a pattern match on a public file, quoted exactly. A match means the line is worth reading. It is not a finding that a site did anything wrong: a line that tells an AI to use the official docs is steering, and so is a line that tells it to recommend the company.');
   L.push('');
   L.push('## This run', '');
@@ -71,10 +75,11 @@ export function buildReport({ dataDir, outFile, csvFile, historyFile }) {
     promotional: 'tells an AI to recommend, favour or frame the company',
     steering: 'tells an AI how to answer, which pages to use, what tone to take',
     terms: 'usage or licensing terms that mention AI',
+    'platform-default': 'text a hosting platform inserts into its customers\' files; it says nothing about the site, so the site is not graded for it',
     literal: 'present but not an instruction: a code sample or a stray invisible character',
     none: 'no match',
   };
-  for (const t of ['injection', 'command', 'hidden', 'promotional', 'steering', 'terms', 'literal', 'none']) {
+  for (const t of ['injection', 'command', 'hidden', 'promotional', 'steering', 'terms', 'platform-default', 'literal', 'none']) {
     const n = cur.summary.by_worst_tier[t] || 0;
     L.push(`| ${t} | ${n} | ${meaning[t]} |`);
   }
@@ -99,6 +104,22 @@ export function buildReport({ dataDir, outFile, csvFile, historyFile }) {
     L.push(`| [${s.domain}](${s.url}) | ${cell(f.quote)} | ${f.rule} | ${f.line} |`);
   }
   L.push('');
+
+  // Text a platform inserts into its customers' files. Shown on its own so no site is graded for it.
+  const platformSites = ok.filter((s) => (s.findings || []).some((f) => f.tier === 'platform-default')).sort((a, b) => a.domain.localeCompare(b.domain));
+  L.push(`## Platform defaults (${platformSites.length} sites)`, '');
+  if (!platformSites.length) L.push('No file in this run carries a known platform default.', '');
+  else {
+    L.push('These files carry a paragraph that a hosting platform writes into its customers\' files. The sites are not graded for it, and the index does not count it as steering or promotional text from the site.', '');
+    for (const p of PLATFORM_DEFAULTS) {
+      const rows = platformSites.flatMap((s) => (s.findings || []).filter((f) => f.rule === p.id).map((f) => ({ s, f })));
+      if (!rows.length) continue;
+      L.push(`**${p.platform}** (${p.id}). ${p.evidence}`, '');
+      L.push('| Site | Quote | Line |', '|---|---|---|');
+      for (const { s, f } of rows) L.push(`| [${s.domain}](${s.url}) | ${cell(f.quote)} | ${f.line} |`);
+      L.push('');
+    }
+  }
 
   // The same line on more than one site: a shared template, a shared vendor or a copied file.
   const byId = new Map();
@@ -143,6 +164,7 @@ export function buildReport({ dataDir, outFile, csvFile, historyFile }) {
   L.push('- One request per site to `/llms.txt` (then `www.` if the bare domain has none), with a named User-Agent, robots.txt honoured for that path, a 1 MiB cap and no link followed.');
   L.push('- The scanner reads each file line by line. A line fires a rule only when it names an AI reader or sits under a heading that addresses one, except for rules that need no context (override phrases, control tokens, hidden characters).');
   L.push('- Rules are regular expressions, so recall is unknown and false positives happen. Read every quote before using it. The rule list is in `src/rules.js` and `steering-watch rules`.');
+  L.push('- A paragraph that a hosting platform writes into its customers\' files is classed as a platform default (rule list: `steering-watch rules`). A rule is added only after the paragraph is read on a site outside the list. Identical text on several sites is otherwise left ungraded as to who wrote it.');
   L.push('- A file that changed since the last run may be a different file behind the same address, for example a regional variant.');
   L.push('- The list is fixed on purpose, so runs are comparable. It is not a sample of the web.');
   L.push('- Snapshots keep a hash and exact short quotes, not copies of the files.');
@@ -157,7 +179,7 @@ export function buildReport({ dataDir, outFile, csvFile, historyFile }) {
       csvRows.push({ date: cur.date, domain: s.domain, cohort: s.cohort, status: s.status, url: s.url || '' });
       continue;
     }
-    for (const f of bestPerLine(s.findings || []).filter((f) => TIER_RANK[f.tier] >= TIER_RANK.steering)) {
+    for (const f of bestPerLine(s.findings || []).filter((f) => TIER_RANK[f.tier] >= TIER_RANK.steering || f.tier === 'platform-default')) {
       csvRows.push({ date: cur.date, domain: s.domain, cohort: s.cohort, status: 'ok', url: s.url, tier: f.tier, rule: f.rule, confidence: f.confidence, line: f.line, heading: f.heading, quote: f.quote, finding_id: f.id });
     }
   }

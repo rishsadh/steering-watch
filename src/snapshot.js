@@ -2,8 +2,8 @@
 // snapshot. Snapshots keep hashes and exact short quotes, not full copies of other people's files.
 import fs from 'node:fs';
 import path from 'node:path';
-import { RULES_VERSION, TIER_RANK } from './rules.js';
-import { bestPerLine, scanText } from './scan.js';
+import { RULES_VERSION, TIER_RANK, platformDefaultFor } from './rules.js';
+import { bestPerLine, findingId, scanText, worstTier } from './scan.js';
 import { fetchLlmsTxt, USER_AGENT } from './fetch.js';
 import { parseCsv } from './csv.js';
 
@@ -88,13 +88,41 @@ export async function runIndex({ watchlist, outDir, date, concurrency = 4, delay
   return snap;
 }
 
+// Re-grade a snapshot written under older rules, in memory. Today that means one thing: a finding
+// whose stored quote is a known platform default (see PLATFORM_DEFAULTS) is moved to the
+// "platform-default" tier, and the file's worst tier and the summary are recomputed. The snapshot
+// on disk is left as it was written. A snapshot already at the current rules version is returned as is.
+export function regradeSnapshot(snap) {
+  if (snap.rules_version === RULES_VERSION) return snap;
+  let changed = 0;
+  const sites = snap.sites.map((s) => {
+    if (s.status !== 'ok' || !s.findings) return s;
+    let touched = false;
+    const findings = s.findings.map((f) => {
+      const p = platformDefaultFor(f.quote);
+      if (!p || f.tier === 'platform-default') return f;
+      touched = true;
+      changed++;
+      const g = { ...f, rule: p.id, tier: 'platform-default', confidence: p.confidence };
+      g.id = findingId(g);
+      return g;
+    });
+    if (!touched) return s;
+    const best = bestPerLine(findings);
+    const tier_counts = {};
+    for (const f of best) tier_counts[f.tier] = (tier_counts[f.tier] || 0) + 1;
+    return { ...s, findings, tier_counts, worst: worstTier(findings) };
+  });
+  return { ...snap, rules_version: RULES_VERSION, regraded_from: snap.rules_version, regraded_findings: changed, sites, summary: summarizeSnapshot(sites) };
+}
+
 export function loadSnapshots(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs
     .readdirSync(dir)
     .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
     .sort()
-    .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+    .map((f) => regradeSnapshot(JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))));
 }
 
 // Compare two snapshots: who added or removed AI-directed text, and whose file appeared or went.

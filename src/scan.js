@@ -1,7 +1,7 @@
 // The scanner engine: read text (llms.txt, Markdown, HTML) and report each AI-directed
 // instruction, hidden-text pattern or command pattern with an exact quote and a line number.
 import { createHash } from 'node:crypto';
-import { AI_WORD, LINE_RULES, RULES_VERSION, TIER_RANK, contextAllows, headingAddressesAI } from './rules.js';
+import { AI_WORD, LINE_RULES, RULES_VERSION, TIER_RANK, contextAllows, headingAddressesAI, platformDefaultFor } from './rules.js';
 import { clip, scanHidden, stripTags } from './hidden.js';
 
 const CONF_RANK = { low: 0, medium: 1, high: 2 };
@@ -95,6 +95,21 @@ export function scanText(text) {
     const headingAI = headings.some((h) => headingAddressesAI(h.text));
     const nearestAI = headings.length > 0 && headingAddressesAI(headings[headings.length - 1].text);
     const lineAI = !linkEntry && AI_WORD.test(prose);
+    // A paragraph a hosting platform inserts into its customers' files is classed on its own and
+    // is not also graded by the line rules, so the site is not marked for the platform's text.
+    const platform = u.fence ? null : platformDefaultFor(plain);
+    if (platform) {
+      findings.push({
+        rule: platform.id,
+        tier: 'platform-default',
+        confidence: platform.confidence,
+        line: u.line,
+        heading: headingText,
+        quote: clip(u.text.replace(/\*\*|__/g, '')),
+        why: platform.why,
+      });
+      continue;
+    }
     for (const r of LINE_RULES) {
       if (u.fence) {
         if (!r.literalWhenCode) continue;
