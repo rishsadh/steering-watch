@@ -1,11 +1,10 @@
-# The recurring index run. DISABLED until launch: it only runs when started by hand.
-# To switch on the weekly schedule, uncomment the two schedule lines below.
+# The recurring index run. Switched on 13 Oct 2026: it runs every Monday and can also be started by hand.
 name: index
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '17 6 * * 1'   # every Monday at 06:17 UTC
+  schedule:
+    - cron: '17 6 * * 1'   # every Monday at 06:17 UTC
 
 permissions:
   contents: write

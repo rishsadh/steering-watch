@@ -154,8 +154,8 @@ Nearby work, and how this differs: Common Crawl and Installmap published one-off
 check on a fixed list. There are labs for testing agents that read llms.txt and skill scanners for AGENTS.md
 and SKILL.md files; this targets the llms.txt on live sites and adds a change history.
 
-The index workflow in `.github/workflows/index.yml` is set to manual start. The weekly schedule is two
-commented lines away.
+The index workflow in `.github/workflows/index.yml` runs every Monday at 06:17 UTC and can also be started by
+hand. The next run after the 2026-09-30 run is Monday 19 October 2026.
 
 ## Licence
 
