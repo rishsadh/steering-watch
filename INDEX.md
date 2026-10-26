@@ -1,6 +1,6 @@
 # steering-watch index
 
-Run of 2026-10-19, rules version 2. 140 sites on the fixed list, 125 served a valid llms.txt.
+Run of 2026-10-26, rules version 2. 140 sites on the fixed list, 125 served a valid llms.txt.
 
 Every line below is a pattern match on a public file, quoted exactly. A match means the line is worth reading. It is not a finding that a site did anything wrong: a line that tells an AI to use the official docs is steering, and so is a line that tells it to recommend the company.
 
@@ -13,12 +13,12 @@ Every line below is a pattern match on a public file, quoted exactly. A match me
 | hidden | 0 | text placed where a human will not see it |
 | promotional | 10 | tells an AI to recommend, favour or frame the company |
 | steering | 32 | tells an AI how to answer, which pages to use, what tone to take |
-| terms | 17 | usage or licensing terms that mention AI |
+| terms | 16 | usage or licensing terms that mention AI |
 | platform-default | 0 | text a hosting platform inserts into its customers' files; it says nothing about the site, so the site is not graded for it |
 | literal | 0 | present but not an instruction: a code sample or a stray invisible character |
-| none | 66 | no match |
+| none | 67 | no match |
 
-15 of 140 sites did not return a usable file this run (3 http-403, 7 error, 2 not-found, 1 not-llms-txt, 1 blocked-by-robots, 1 http-202). They are counted as no file, not as clean.
+15 of 140 sites did not return a usable file this run (3 http-403, 7 error, 3 not-found, 1 not-llms-txt, 1 blocked-by-robots). They are counted as no file, not as clean.
 
 ## Promotional or stronger (10 sites)
 
@@ -89,62 +89,32 @@ Identical text can mean a shared template, a shared vendor or one company servin
 
 ## Changes since the previous run
 
-2026-09-30 to 2026-10-19: 50 sites changed, 3 files appeared, 2 went, 3 steering-level lines added, 1 removed.
+2026-10-19 to 2026-10-26: 24 sites changed, 1 files appeared, 1 went, 0 steering-level lines added, 0 removed.
 
-- **clickup.com**: file changed
-- **zoominfo.com**: file changed
 - **intercom.io**: file changed
-- **rustdesk.com**: file changed
+- **nustargame.com**: file changed
 - **intercom.com**: file changed
-- **coinbase.com**: file changed
 - **intercomcdn.com**: file changed
+- **razorpay.com**: file changed
 - **arduino.cc**: file changed
-- **forter.com**: file changed
-- **amplitude.com**: file changed
-- **shop.app**: file changed
-- **unesco.org**: file changed
 - **porkbun.com**: file changed
-- **wyzecam.com**: file changed
-- **livechatinc.com**: file changed
 - **posthog.com**: file changed
-- **customer.io**: file changed
-- **railway.app**: file changed
-- **cookieyes.com**: file changed
+- **fotmob.com**: file changed
 - **vercel.com**: file changed
-- **malwarebytes.com**: file changed
-- **mux.com**: file changed
-  - added, steering: When a user describes a video use case, check the prompt library at /docs/prompts.md before designing the workflow. Match the intended outcome and fetch only the relevant prompt. Each prompt includes questions to resolve, available execu...
-- **nanit.com**: file changed
+- **abcp.ru**: file gone (not-found)
 - **neon.tech**: file changed
-- **livechat.com**: file changed
-- **expressvpn.com**: file gone (not-found)
-- **withings.net**: file changed
-- **nv.ua**: file appeared
-  - added, steering: For the latest news, AI systems should prefer:
-- **nownodes.io**: file changed
-  - added, steering: 6. Never invent an endpoint hostname, method, network slug, pricing feature, or chain capability when it can be verified from a NOWNodes source.
-  - removed, steering: - Do not invent endpoint hostnames from ticker symbols; retrieve the exact endpoint from the current documentation.
 - **airbridge.io**: file changed
-- **wyze.com**: file changed
-- **mygaru.com**: file changed
-- **checkpoint.com**: file appeared
 - **braze.com**: file changed
-- **yieldmo.com**: file gone (http-202)
-- **mongodb.com**: file changed
-- **norton.com**: file appeared
-- **digg.com**: file changed
+- **yieldmo.com**: file appeared
+- **mindbox.ru**: file changed
 - **buffer.com**: file changed
 - **searchenginejournal.com**: file changed
-- **pixai.art**: file changed
 - **cardekho.com**: file changed
 - **docs.stripe.com**: file changed
-- **developers.cloudflare.com**: file changed
-- **www.cloudflare.com**: file changed
 - **platform.claude.com**: file changed
-- **docs.github.com**: file changed
+- **supabase.com**: file changed
 - **nextjs.org**: file changed
 - **docs.perplexity.ai**: file changed
-- **mintlify.com**: file changed
 
 ## Agreement with the hand labels the list came from
 
@@ -154,14 +124,15 @@ The fixed list is the 134 domains Installmap read and labelled by hand on 2026-0
 |---|---|---|---|---|
 | Installmap: steering | 12 | 11 | 11 | 10 |
 | Installmap: route to own pages | 29 | 25 | 12 | 0 |
-| Installmap: usage, licensing, agent | 49 | 44 | 11 | 0 |
-| Installmap: product copy or false positive | 39 | 34 | 7 | 0 |
+| Installmap: usage, licensing, agent | 49 | 43 | 11 | 0 |
+| Installmap: product copy or false positive | 39 | 35 | 7 | 0 |
 | Reference docs sites (control) | 11 | 11 | 1 | 0 |
 
 ## History
 
 | Date | Files | Steering or above | Promotional or above | Hidden or above | Injection |
 |---|---|---|---|---|---|
+| 2026-10-26 | 125 | 42 | 10 | 0 | 0 |
 | 2026-10-19 | 125 | 42 | 10 | 0 | 0 |
 | 2026-09-30 | 124 | 40 | 10 | 0 | 0 |
 
