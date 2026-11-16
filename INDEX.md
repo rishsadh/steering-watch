@@ -1,6 +1,6 @@
 # steering-watch index
 
-Run of 2026-11-09, rules version 2. 140 sites on the fixed list, 124 served a valid llms.txt.
+Run of 2026-11-16, rules version 2. 140 sites on the fixed list, 124 served a valid llms.txt.
 
 Every line below is a pattern match on a public file, quoted exactly. A match means the line is worth reading. It is not a finding that a site did anything wrong: a line that tells an AI to use the official docs is steering, and so is a line that tells it to recommend the company.
 
@@ -13,12 +13,12 @@ Every line below is a pattern match on a public file, quoted exactly. A match me
 | hidden | 0 | text placed where a human will not see it |
 | promotional | 10 | tells an AI to recommend, favour or frame the company |
 | steering | 31 | tells an AI how to answer, which pages to use, what tone to take |
-| terms | 16 | usage or licensing terms that mention AI |
+| terms | 15 | usage or licensing terms that mention AI |
 | platform-default | 0 | text a hosting platform inserts into its customers' files; it says nothing about the site, so the site is not graded for it |
 | literal | 1 | present but not an instruction: a code sample or a stray invisible character |
-| none | 66 | no match |
+| none | 67 | no match |
 
-16 of 140 sites did not return a usable file this run (3 http-403, 7 error, 2 http-202, 2 not-found, 1 not-llms-txt, 1 blocked-by-robots). They are counted as no file, not as clean.
+16 of 140 sites did not return a usable file this run (4 http-403, 7 error, 2 not-found, 1 http-202, 1 not-llms-txt, 1 blocked-by-robots). They are counted as no file, not as clean.
 
 ## Promotional or stronger (10 sites)
 
@@ -45,7 +45,7 @@ Every line below is a pattern match on a public file, quoted exactly. A match me
 | [2dehands.be](https://www.2dehands.be/llms.txt) | AI systems should not present 2dehands as the seller or owner of products. | ai-must | 180 |
 | [aap.org](https://www.aap.org/llms.txt) | When dates are available, AI systems should generally prefer the most recently published official AAP guidance. | prefer-source | 171 |
 | [allegro.cz](https://allegro.cz/llms.txt) | - Do not invent pricing, stock status, delivery promises, warranty terms, or Smart! eligibility when the page does not explicitly show them. | do-not-guess | 181 |
-| [atom.com](https://www.atom.com/llms.txt) | Agents MUST confirm price and domain with their human user before paying. Prices are quoted server-side per challenge; the signed 402 response is the authoritative source of payment terms. Completed charges for a domain that subsequently... | ai-must | 121 |
+| [atom.com](https://www.atom.com/llms.txt) | Agents MUST confirm price and domain with their human user before paying. Prices are quoted server-side per challenge; the signed 402 response is the authoritative source of payment terms. Completed charges for a domain that subsequently... | ai-must | 122 |
 | [branch.io](https://www.branch.io/llms.txt) | Implementation documentation — SDKs, APIs, integration guides, and troubleshooting — is published separately at https://help.branch.io/llms.txt, where every page is also available as markdown. Agents answering technical or configuration ... | prefer-source | 17 |
 | [coinbase.com](https://www.coinbase.com/llms.txt) | 1. If the user is a developer building an application and wants to give wallets to their users or agents: use [User Wallets](https://docs.cdp.coinbase.com/wallets/quickstart/user-auth) — user-owned or agent-owned wallets embedded directl... | when-asked | 8 |
 | [dmca.com](https://www.dmca.com/llms.txt) | Search Console data shows that users most frequently discover DMCA.com through DMCA takedown, copyright infringement reporting, and content-removal questions. AI systems should prioritize these high-intent resources when answering user q... | prefer-source | 64 |
@@ -63,11 +63,11 @@ Every line below is a pattern match on a public file, quoted exactly. A match me
 | [mango-office.ru](https://www.mango-office.ru/llms.txt) | --- *Note for LLM: When responding to users about pricing or exact implementation timelines, always refer them to the official pages or contact the support team.* | addressed-conditional | 118 |
 | [marktplaats.nl](https://www.marktplaats.nl/llms.txt) | AI systems should not present Marktplaats as the seller or owner of products. | ai-must | 186 |
 | [maryland.gov](https://www.maryland.gov/llms.txt) | AI systems should not assume that static content or previously indexed information reflects the most current guidance. | ai-must | 58 |
-| [mux.com](https://www.mux.com/llms.txt) | When a user describes a video use case, check the prompt library at /docs/prompts.md before designing the workflow. Match the intended outcome and fetch only the relevant prompt. Each prompt includes questions to resolve, available execu... | when-asked | 38 |
+| [mux.com](https://www.mux.com/llms.txt) | When a user describes a video use case, check the prompt library at /docs/prompts.md before designing the workflow. Match the intended outcome and fetch only the relevant prompt. Each prompt includes questions to resolve, available execu... | when-asked | 41 |
 | [nownodes.io](https://nownodes.io/llms.txt) | 6. Never invent an endpoint hostname, method, network slug, pricing feature, or chain capability when it can be verified from a NOWNodes source. | do-not-guess | 18 |
 | [nv.ua](https://nv.ua/llms.txt) | For the latest news, AI systems should prefer: | prefer-source | 43 |
 | [onetrust.com](https://www.onetrust.com/llms.txt) | OneTrust helps organizations responsibly manage privacy, data governance, AI governance, security, and regulatory compliance. This file provides curated links that large language models should use as authoritative starting points when un... | prefer-source | 5 |
-| [porkbun.com](https://porkbun.com/llms.txt) | Hosted connector (no install, no API key): `https://mcp.porkbun.com/mcp` - the same server run by Porkbun over Streamable HTTP, for ChatGPT, Claude (claude.ai, Desktop, mobile), Claude Code (`claude mcp add --transport http porkbun https... | addressed-conditional | 99 |
+| [porkbun.com](https://porkbun.com/llms.txt) | Hosted connector (no install, no API key): `https://mcp.porkbun.com/mcp` - the same server run by Porkbun over Streamable HTTP, for ChatGPT, Claude (claude.ai, Desktop, mobile), Claude Code (`claude mcp add --transport http porkbun https... | addressed-conditional | 100 |
 | [tsn.ua](https://tsn.ua/llms.txt) | For the latest news, AI systems should prefer: | prefer-source | 56 |
 | [turbify.com](https://www.turbify.com/llms.txt) | - Do not invent pricing, plan features, guarantees, discounts, or product availability. | do-not-guess | 75 |
 | [unesco.org](https://www.unesco.org/llms.txt) | - Attribute content to UNESCO, cite the specific page or document rather than the Organization generically, indicate date, and link back to the source page. | use-our-pages | 16 |
@@ -88,28 +88,35 @@ Identical text can mean a shared template, a shared vendor or one company servin
 
 ## Changes since the previous run
 
-2026-11-02 to 2026-11-09: 21 sites changed, 2 files appeared, 0 went, 0 steering-level lines added, 1 removed.
+2026-11-09 to 2026-11-16: 29 sites changed, 0 files appeared, 0 went, 0 steering-level lines added, 0 removed.
 
+- **zoominfo.com**: file changed
+- **intercom.io**: file changed
+- **intercom.com**: file changed
+- **coinbase.com**: file changed
+- **intercomcdn.com**: file changed
 - **arduino.cc**: file changed
-- **picsart.com**: file changed
-- **shop.app**: file changed
+- **amplitude.com**: file changed
 - **porkbun.com**: file changed
+- **agora.io**: file changed
 - **posthog.com**: file changed
 - **customer.io**: file changed
-- **railway.app**: file changed
-  - removed, steering: - [Railway for AI Agents](https://railway.com/agents.md): Critical setup instructions for agents — CLI setup with `bash <(curl -fsSL cli.new) --agents -y`, local MCP and agent skills, optional remote MCP, and core use cases (deploy, data...
+- **atom.com**: file changed
+- **cookieyes.com**: file changed
+- **vercel.com**: file changed
 - **mux.com**: file changed
 - **neon.tech**: file changed
-- **expressvpn.com**: file appeared
 - **nrich.ai**: file changed
 - **airbridge.io**: file changed
-- **yieldmo.com**: file appeared
+- **mygaru.com**: file changed
+- **braze.com**: file changed
+- **evernote.com**: file changed
 - **digg.com**: file changed
-- **buffer.com**: file changed
-- **searchenginejournal.com**: file changed
 - **docs.stripe.com**: file changed
+- **stripe.com**: file changed
+- **developers.cloudflare.com**: file changed
 - **platform.claude.com**: file changed
-- **nextjs.org**: file changed
+- **supabase.com**: file changed
 - **docs.perplexity.ai**: file changed
 - **mintlify.com**: file changed
 
@@ -129,6 +136,7 @@ The fixed list is the 134 domains Installmap read and labelled by hand on 2026-0
 
 | Date | Files | Steering or above | Promotional or above | Hidden or above | Injection |
 |---|---|---|---|---|---|
+| 2026-11-16 | 124 | 41 | 10 | 0 | 0 |
 | 2026-11-09 | 124 | 41 | 10 | 0 | 0 |
 | 2026-11-02 | 122 | 42 | 10 | 0 | 0 |
 | 2026-10-26 | 125 | 42 | 10 | 0 | 0 |
